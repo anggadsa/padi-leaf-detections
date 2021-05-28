@@ -1,1 +1,0 @@
-# padi-leaf-detections
