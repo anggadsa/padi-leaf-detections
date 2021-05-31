@@ -1,38 +1,49 @@
 import os
-from flask import Flask, render_template, request, flash
-from flask_uploads import IMAGES, UploadSet, configure_uploads
+import json
+import tensorflow as tf
+import tensorflow_hub as hub
+import numpy as np
+import tensorflow.keras as keras
+
+from tensorflow.keras.preprocessing import image
+from flask import Flask, request, render_template, jsonify
+# from werkzeug.utils import secure_filename
+
+
 
 app = Flask(__name__)
-photos = UploadSet("photos", IMAGES)
-app.config["UPLOADED_PHOTOS_DEST"] = "uploads"
-app.config["SECRET_KEY"] = os.urandom(24)
-configure_uploads(app, photos)
 
-@app.route('/', methods=['GET'])
-def index():
-    # Main page
-    return render_template('upload.html')
+app.config['UPLOAD_FOLDER']="images"
+# model = tf.keras.models.load_model("paddy_leaf_disease_detection_model.h5")
+# model = tf.keras.models.load_model("paddy_leaf_disease_detection_model.h5", custom_objects={'KerasLayer':hub.KerasLayer})
+model = tf.keras.models.load_model("simple_model.h5")
 
-@app.route("/upload", methods=['GET', 'POST'])
-def upload():
-    if request.method == 'POST' and 'image' in request.files:
-        # Get the image 
-        photos.save(request.files['image'])
-        flash("Image saved successfully.")
-        '''
-        # Make prediction
-        preds = model_predict(file_path, model)
+@app.route("/")
+def hello():
+    return "Hello, World!"
 
-        # Process your result for human
-        # pred_class = preds.argmax(axis=-1)            # Simple argmax
-        pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
-        result = str(pred_class[0][0][1])               # Convert to string
-        return result
-        '''
-        # Return the view or Json
-        return render_template('upload.html')
-    return render_template('upload.html')
+@app.route("/predict", methods=["POST"])
+def predict():
+    if request.method == 'POST':
+        upload_image=request.files['image']
+        
+        filepath=os.path.join(app.config['UPLOAD_FOLDER'],upload_image.filename)
+        upload_image.save(filepath)
+
+        #path ke gambar+nama filenya
+        fname = 'images/images.jpg'
+        # model = tf.keras.models.load_model("paddy_leaf_disease_detection_model.h5", custom_objects={'KerasLayer':hub.KerasLayer})
+        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate = 0.001), 
+                    loss = 'categorical_crossentropy',
+                    metrics = ['accuracy'])
+
+        # Read the image
+        image_size = (244, 244)
+        test_image = image.load_img(fname, target_size = image_size)
+        test_image = image.img_to_array(test_image)
+        test_image = np.expand_dims(test_image, axis = 0)
+        result = model.predict(test_image)
+    return  jsonify(result=result)
 
 if __name__ == '__main__':
-    # Setting with ip and port HTTP
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(debug=True)
