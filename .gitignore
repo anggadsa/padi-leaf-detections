@@ -1,4 +1,5 @@
-__pychache__/
+__pychache__
 template/
-templates/
+templates
 paddy_leaf_disease_detection_model.h5
+app.cpython-37.pyc
