@@ -37,7 +37,7 @@ def predict():
                     loss = 'categorical_crossentropy',
                     metrics = ['accuracy'])
 
-        # Read the image
+        # Read the image//
         image_size = (244, 244)
         test_image = image.load_img(fname, target_size = image_size)
         test_image = image.img_to_array(test_image)
