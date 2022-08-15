@@ -61,7 +61,7 @@ def predict():
             label_name= 'Healthy'
             description = df.loc[df["Label"] == label_name]["Description"][1]
             solution = df.loc[df["Label"] == label_name]["Solution"][1]
-        elif label == 3:
+        elif label == 2:
             id = int(str(time.time()).replace('.', '')[3:13])
             label_name= 'Hispa'
             description = df.loc[df["Label"] == label_name]["Description"][2]
@@ -84,4 +84,4 @@ def dictionary():
     return data   
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=5000)
