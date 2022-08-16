@@ -3,3 +3,4 @@ __pychache__
 paddy_leaf_disease_detection_model.h5
 app.cpython-37.pyc
 model.py
+*.jpg
