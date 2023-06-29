@@ -1,4 +1,4 @@
-__pychache__/
-template/
+__pychache__/ 
 templates/
 paddy_leaf_disease_detection_model.h5
+*.jpg
