@@ -18,6 +18,7 @@ app.config['UPLOAD_FOLDER']="images"
 model = tf.keras.models.load_model("paddy_leaf_disease_detection_model.h5", custom_objects={'KerasLayer':hub.KerasLayer})
 # model = tf.keras.models.load_model("simple_model.h5")
 
+# Server test functions
 @app.route("/")
 def hello():
     return 'Hello World'
@@ -75,4 +76,4 @@ def predict():
         print(KeyError)
         
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
