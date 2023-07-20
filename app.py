@@ -15,13 +15,21 @@ from flask import Flask, request, render_template, jsonify
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER']="images"
 
+model_loc = '../Paddy-Leaf-Disease-Detection-ML-Model/Code/MobileNetV2_Model-paddy-disease-detections.h5'
+model = tf.keras.models.load_model(model_loc, custom_objects={'KerasLayer':hub.KerasLayer})
 # model = tf.keras.models.load_model("paddy_leaf_disease_detection_model.h5", custom_objects={'KerasLayer':hub.KerasLayer})
-model = tf.keras.models.load_model("simple_model.h5")
+# model = tf.keras.models.load_model("simple_model.h5")
 
 # Server test functions
 @app.route("/")
 def hello():
     return 'Hello World'
+
+def prepare_image(file):
+    img = image.load_img(file, target_size=(224, 224))
+    img_array = image.img_to_array(img)
+    img_array_expanded_dims = np.expand_dims(img_array, axis=0)
+    return tf.keras.applications.mobilenet_v2.preprocess_input(img_array_expanded_dims)
 
 # Machine Learning Predict and
 @app.route("/predict", methods=["GET", "POST"])
@@ -35,22 +43,25 @@ def predict():
 
         #path ke gambar+nama filenya
         fname = "images/{}".format(os.listdir('images/')[0])
-        #
         df = pd.read_csv("model/label.csv", sep = ";")
+
+        # Export Decoded Number
         def return_label(array):
             largest = 0
+            print(array)
             for x in range(0, len(array)):
                 if(array[x] > largest):
                     largest = array[x]
                     y = x
             return y
-        # Read the image
-        image_size = (244, 244)
-        test_image = image.load_img(fname, target_size = image_size)
-        test_image = image.img_to_array(test_image)
-        test_image = np.expand_dims(test_image, axis = 0)
-        result = model.predict(test_image)
+        
+        # Read the image V1
+        preprocessed_image = prepare_image(fname)
+        result = model.predict(preprocessed_image)
         label = return_label(result[0])
+        print(result)
+        print(label)
+
         if label == 0:
             id = int(str(time.time()).replace('.', '')[3:13])
             label_name = 'Brown Spot'
