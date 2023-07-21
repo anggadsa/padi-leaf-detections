@@ -63,36 +63,29 @@ def predict():
         print(label)
 
         if label == 0:
-            id = int(str(time.time()).replace('.', '')[3:13])
-            label_name = 'Brown Spot'
-            description = df.loc[df["Label"] == label_name]["Description"][0]
-            solution = df.loc[df["Label"] == label_name]["Solution"][0]
+            id = int(str(time.time()).replace('.', ''))
+            label = 'Brown Spot'
+            description = df.loc[df["Label"] == label]["Description"][0]
+            solution = df.loc[df["Label"] == label]["Solution"][0]
         elif label == 1:
-            id = int(str(time.time()).replace('.', '')[3:13])
-            label_name= 'Healthy'
-            description = df.loc[df["Label"] == label_name]["Description"][1]
-            solution = df.loc[df["Label"] == label_name]["Solution"][1]
+            id = int(str(time.time()).replace('.', ''))
+            label = 'Healthy'
+            description = df.loc[df["Label"] == label]["Description"][1]
+            solution = df.loc[df["Label"] == label]["Solution"][1]
         elif label == 2:
-            id = int(str(time.time()).replace('.', '')[3:13])
-            label_name= 'Hispa'
-            description = df.loc[df["Label"] == label_name]["Description"][2]
-            solution = df.loc[df["Label"] == label_name]["Solution"][2]
+            id = int(str(time.time()).replace('.', ''))
+            label = 'Hispa'
+            description = df.loc[df["Label"] == label]["Description"][2]
+            solution = df.loc[df["Label"] == label]["Solution"][2]
         elif label == 3:
-            id = int(str(time.time()).replace('.', '')[3:13])
-            label_name = 'Leaf Blast'
-            description = df.loc[df["Label"] == label_name]["Description"][3]
-            solution = df.loc[df["Label"] == label_name]["Solution"][3]
-        os.remove("images/{}".format(upload_image.filename))
-        return jsonify(id=id, label=label_name, description=description, solution=solution)
-    else:
-        return "Internal Server Error, Using Method Get but not run the code"
-
-# Functions for Paddy Dictionary
-@app.route("/dictionary")
-def dictionary():
-    f = open('label.json')
-    data = json.load(f)
-    return data   
-
+            id = int(str(time.time()).replace('.', ''))
+            label = 'Leaf Blast'
+            description = df.loc[df["Label"] == "Leaf Blast"]["Description"][3]
+            solution = df.loc[df["Label"] == label]["Solution"][3]
+        return jsonify(id=id, label=label, description=description, solution=solution)
+    
+    else: 
+        print(KeyError)
+        
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
